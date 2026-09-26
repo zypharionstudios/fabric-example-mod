@@ -15,7 +15,7 @@ loom {
 	splitEnvironmentSourceSets()
 
 	mods {
-		"modid" {
+				"zypharion-client" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}
