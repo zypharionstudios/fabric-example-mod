@@ -7,9 +7,9 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class ClientModules {
 	public enum Module {
@@ -32,7 +32,7 @@ public final class ClientModules {
 	}
 
 	private static final Path CONFIG = FabricLoader.getInstance().getConfigDir().resolve("zypharion-client.properties");
-	private static final Map<Module, Boolean> enabled = new EnumMap<>(Module.class);
+	private static final Map<Module, Boolean> enabled = new ConcurrentHashMap<>();
 
 	private ClientModules() {
 	}

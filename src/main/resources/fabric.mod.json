@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
 		"id": "zypharion-client",
-		"version": "1.0.0",
+		"version": "1.0.1",
 		"name": "Zypharion Client",
-		"description": "Konfigurierbares Client-Menue fuer eigene Welten und Server mit Erlaubnis.",
+		"description": "Zypharion client modules for Minecraft 26.2.",
 	"authors": [
 			"Zypharion"
 	],

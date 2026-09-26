@@ -1,7 +1,6 @@
 package com.example.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.Items;
@@ -92,7 +91,7 @@ public final class ClientModuleRuntime {
 	}
 
 	private static void updateFreecam(Minecraft client) {
-		if (!ClientModules.isEnabled(ClientModules.Module.FREECAM) || !client.hasSingleplayerServer()) {
+		if (!ClientModules.isEnabled(ClientModules.Module.FREECAM)) {
 			stopFreecam(client);
 			return;
 		}
@@ -105,9 +104,6 @@ public final class ClientModuleRuntime {
 
 		client.player.setPos(playerAnchor);
 		client.player.setDeltaMovement(Vec3.ZERO);
-		camera.setYRot(client.player.getYRot());
-		camera.setXRot(client.player.getXRot());
-
 		float yawRadians = camera.getYRot() * ((float) Math.PI / 180.0F);
 		Vec3 forward = new Vec3(-Math.sin(yawRadians), 0.0, Math.cos(yawRadians));
 		Vec3 right = new Vec3(Math.cos(yawRadians), 0.0, Math.sin(yawRadians));

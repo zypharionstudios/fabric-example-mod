@@ -1,0 +1,69 @@
+name: Publish Zypharion Client
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - downloads/zypharion-client-26.2.jar
+      - src/**
+      - .github/workflows/publish.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate mod JAR
+        run: |
+          python3 - <<'PY'
+          import json
+          import zipfile
+
+          path = "downloads/zypharion-client-26.2.jar"
+          with zipfile.ZipFile(path) as jar:
+              mod = json.loads(jar.read("fabric.mod.json"))
+              required = {
+                  "com/example/client/ClientMenuScreen.class",
+                  "com/example/client/ClientModuleRuntime.class",
+                  "com/example/client/ClientModules.class",
+                  "com/example/client/FreecamCamera.class",
+                  "com/example/client/mixin/XrayMixin.class",
+                  "com/example/client/mixin/NoFogMixin.class",
+                  "zypharion.client.mixins.json",
+              }
+              missing = required.difference(jar.namelist())
+              if missing:
+                  raise SystemExit(f"JAR is missing entries: {sorted(missing)}")
+              if mod["id"] != "zypharion-client" or mod["depends"]["minecraft"] != "~26.2":
+                  raise SystemExit("JAR metadata does not match Zypharion Client for Minecraft 26.2")
+          print(f"Validated {path}: {mod['name']} {mod['version']} ({mod['depends']['minecraft']})")
+          PY
+
+      - name: Upload Actions download
+        uses: actions/upload-artifact@v4
+        with:
+          name: Zypharion-Client-Minecraft-26.2
+          path: downloads/zypharion-client-26.2.jar
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Publish GitHub release asset
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="zypharion-${GITHUB_SHA::7}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" downloads/zypharion-client-26.2.jar --clobber
+          else
+            gh release create "$tag" downloads/zypharion-client-26.2.jar \
+              --title "Zypharion Client for Minecraft 26.2" \
+              --notes "Zypharion Client JAR validated and published by GitHub Actions."
+          fi
