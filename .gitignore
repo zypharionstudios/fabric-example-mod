@@ -1,7 +1,5 @@
-# gradle
+# build output
 
-.gradle/
-build/
 out/
 classes/
 
